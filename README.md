@@ -66,10 +66,4 @@ Additionally, it uses:
 - **FreeRTOS** (integrated in the board support package).
 - **SX126x-RAK4630** (RAK provided LoRa library).
 
-## Installation & Setup
 
-1. **Clone the Repository:**
-
-   Open your terminal and run:
-   ```bash
-   git clone https://github.com/YourUsername/OzarkMountainCat.git
