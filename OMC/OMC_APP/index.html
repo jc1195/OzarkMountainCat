@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battery Icon</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.3.0/mapbox-gl-draw.js'></script>
+    <!-- Include Turf.js here -->
+    <script src='https://api.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+</head>
+
+<body>
+    <h1>Ozark Mountain Cat</h1>
+
+    <div id="hamburger" onclick="toggleSidebar()">☰</div>
+    <div id="sidebar">
+        <button id="connectButton">Connect to CatTracker</button>
+        <button id="disconnectButton">Disconnect from CatTracker</button>
+        <button id="downloadMapButton">Download Map</button>
+        <button id="forceOfflineButton">Use Offline Maps</button>
+        <button id="checkDownloadButton">Check Downloaded Map</button>
+        <!-- Add more buttons here -->
+    </div>
+    
+    <div class="status-icons">
+        <div class="battery-container">
+            <div class="battery">
+                <div class="hBattery-level"></div>
+                <div class="battery-icon"></div>
+            </div>
+            <div id="hBatteryPercentage" class="battery-percentage">0%</div>
+        </div>
+
+        <div class="signal-container">
+            <img id="signalIcon" class="signal-icon" src="0Bars.png" alt="Signal Icon">
+            <div id="rssiValue" class="rssi-value">-0 dBm</div>
+        </div>
+
+        <div class="sat-container">
+            <img id="satIcon" class="signal-icon" src="SatOff.png" alt="Sat Icon">
+            <div id="satValue" class="sat-value">0 SIV</div>
+        </div>
+
+        <!-- <span class="info-title">HDOP:</span> -->
+        <span class="sat-value" id="hdopValue">0.00 HDOP</span>
+
+        <div class="light-container">
+            <img id="lightIcon" class="light-icon" src="LBOff.png" alt="Light Icon">
+            <div id="lightValue" class="light-value">Off</div>
+        </div>
+
+        <div id="connectionStatus" class="status-circle red"></div>
+        
+    </div>
+
+    <!-- Second info line -->
+    <div class="info-container">
+        <div class="battery-container">
+            <div class="battery">
+                <div class="rBattery-level"></div>
+                <div class="battery-icon"></div>
+            </div>
+            <div id="rBatteryPercentage" class="battery-percentage">0%</div>
+        </div>
+
+        <span class="info-value" id="powerModeValue">Not Connected</span>
+
+        <span class="info-value" id="timeValue">00:00:00 PM</span>
+        
+        <span class="info-value-right" id="cordValue">0.0, -0.0</span>
+    </div>
+
+    <div class="button-container">
+    
+        <!-- Power Mode button -->
+        <select id="powerModeSelect" onchange="setPwrMode()">
+            <option value=1>Power Saving Mode</option>
+            <option value=0>Live Tracking</option>
+            <option value=2>Extreme PSM</option>
+        </select>
+
+        <!-- Light Color Picker Button -->
+        <select id="lightColorSelect" onchange="setLightColor()">
+            <option value="M">Rainbow</option>
+            <option value="L">Red</option>
+            <option value="K">Pink</option>
+            <option value="J">Purple</option>
+            <option value="I">Orange</option>
+            <option value="H">Bright Orange</option>
+            <option value="G">Yellow</option>
+            <option value="F">Bright Green</option>
+            <option value="E">Green</option>
+            <option value="D">Blue</option>
+            <option value="C">Cyan</option>
+            <option value="B">White</option>
+            <option value="A">Off</option>
+        </select>
+
+    </div>
+    
+    
+    
+
+    <div id="map"></div> <!-- Map container placed here -->
+
+    <script src="app.js"></script>
+    <script src="DataHandler.js"></script>
+</body>
+
+</html>
+
+<!-- <style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    }
+
+    h1 {
+        color: #333;
+        text-align: center;
+    }
+
+    #map {
+        height: 400px;
+        /* You can set this to the desired value */
+        width: 100%;
+    }
+
+    .status-circle {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        margin-left: 10px;
+        vertical-align: middle;
+    }
+
+    .red {
+        background-color: red;
+    }
+
+    .green {
+        background-color: green;
+    }
+
+    #latValue,
+    #lngValue {
+        padding: 10px;
+        margin: 5px;
+        background-color: #f0f0f0;
+        border: 1px solid #ddd;
+    }
+</style>
+
+<script>
+    var map; // Global variable to hold the map instance
+    var trackerMarker; // Global variable to hold the tracker's map marker
+    var userLocationMarker; // Global variable to hold the user's location marker
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        console.log("PWA Pet Tracker is ready!");
+
+        // Initialize the map
+        mapboxgl.accessToken = 'pk.eyJ1IjoiamMxMTk1IiwiYSI6ImNsaW54c2tuZjAzaDIzcm53YjQ2MHFkNTYifQ.Gvtk1A-oWSIUPeGLi1Pflg'; // Replace with your actual MapBox access token
+        map = new mapboxgl.Map({
+            container: 'map', // container ID
+            style: 'mapbox://styles/mapbox/streets-v11', // style URL
+            center: [-74.5, 40], // starting position [lng, lat]
+            zoom: 9 // starting zoom
+        });
+
+        // Initialize geolocation
+        if ('geolocation' in navigator) {
+            userLocationMarker = new mapboxgl.Marker();
+            var initialPositionSet = false;
+
+            const locationWatchID = navigator.geolocation.watchPosition(position => {
+                var lat = position.coords.latitude;
+                var lng = position.coords.longitude;
+
+                userLocationMarker.setLngLat([lng, lat]).addTo(map);
+
+                if (!initialPositionSet) {
+                    map.setCenter([lng, lat]);
+                    map.setZoom(15);
+                    initialPositionSet = true;
+                }
+            }, error => {
+                console.error("Error getting location: ", error);
+            }, {
+                enableHighAccuracy: true
+            });
+
+            window.onbeforeunload = function() {
+                navigator.geolocation.clearWatch(locationWatchID);
+            };
+        } else {
+            console.log('Geolocation is not supported by this browser.');
+        }
+
+        let isConnected = false;
+        const connectButton = document.getElementById('connectButton');
+        connectButton.addEventListener('click', function() {
+            console.log('Connect button clicked');
+
+            navigator.bluetooth.requestDevice({
+                filters: [{ name: 'CatTracker' }],
+                optionalServices: ['4fafc201-1fb5-459e-8fcc-c5c9c331914b', 'beb5483e-36e1-4688-b7f5-ea07361b26a8'] // Use both service UUIDs
+            })
+            .then(device => {
+                console.log('Connecting to device...');
+                device.addEventListener('gattserverdisconnected', onDisconnected);
+                return device.gatt.connect();
+            })
+            .then(server => {
+                console.log('Getting primary GATT Service...');
+                return server.getPrimaryService('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+            })
+            .then(secondService => {
+                console.log('Getting second GATT Characteristic...');
+                return secondService.getCharacteristic('beb5483e-36e1-4688-b7f5-ea07361b26a8');
+            })
+            .then(characteristic => {
+                console.log('Starting notifications...');
+                return characteristic.startNotifications();
+            })
+            .then(characteristic => {
+                console.log('Notifications started.');
+                characteristic.addEventListener('characteristicvaluechanged', handleDataReceived);
+                isConnected = true;
+                updateConnectionStatus(isConnected);
+            })
+            .catch(error => {
+                console.error('Connection failed', error);
+                isConnected = false;
+                updateConnectionStatus(isConnected);
+            });
+        });
+
+        const disconnectButton = document.getElementById('disconnectButton');
+        disconnectButton.addEventListener('click', function() {
+            if (bleDevice && bleDevice.gatt.connected) {
+                bleDevice.gatt.disconnect();
+                console.log('Device disconnected');
+            }
+        });
+
+        function onDisconnected() {
+            console.log('Device disconnected');
+            isConnected = false;
+            updateConnectionStatus(isConnected);
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusIndicator = document.getElementById('connectionStatus');
+            if (connected) {
+                statusIndicator.classList.remove('red');
+                statusIndicator.classList.add('green');
+                statusIndicator.textContent = 'Connected';
+            } else {
+                statusIndicator.classList.remove('green');
+                statusIndicator.classList.add('red');
+                statusIndicator.textContent = 'Disconnected';
+            }
+        }
+    });
+
+    function updateTrackerLocation(lat, lng) {
+        // If the marker doesn't exist yet, create and add it to the map
+        if (!trackerMarker) {
+            trackerMarker = new mapboxgl.Marker({ "color": "#FF8C00" }) // Orange color for visibility
+                .setLngLat([lng, lat])
+                .addTo(map);
+        } else {
+            // If the marker already exists, just update its position
+            trackerMarker.setLngLat([lng, lat]);
+        }
+
+        // Optionally, center the map on the new position
+        map.setCenter([lng, lat]);
+        map.setZoom(15);
+    }
+
+    function handleDataReceived(event) {
+        let value = event.target.value; // Value is a DataView
+        let decoder = new TextDecoder('utf-8');
+        let dataString = decoder.decode(value);
+
+        // Parse the space-delimited string
+        let dataParts = dataString.trim().split(' ');
+        // Assuming the latitude and longitude are in the 2nd and 3rd position
+        let latitude = dataParts[1];
+        let longitude = dataParts[2];
+        // let latitude = parseFloat(dataParts[1]);
+        // let longitude = parseFloat(dataParts[2]);
+
+        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+        document.getElementById('latValue').textContent = `Latitude: ${latitude}`;
+        document.getElementById('lngValue').textContent = `Longitude: ${longitude}`;
+
+
+        updateTrackerLocation(latitude, longitude);
+    }
+
+    document.getElementById('getLocationButton').addEventListener('click', function () {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    // Handle successful location retrieval
+                    userLocationMarker.setLngLat([position.coords.longitude, position.coords.latitude]).addTo(map);
+                    map.setCenter([position.coords.longitude, position.coords.latitude]);
+                    map.setZoom(15);
+                }, function (error) {
+                    // Handle location retrieval error
+                    console.error("Error getting location: ", error);
+                }, {
+                    enableHighAccuracy: true
+                });
+            } else {
+                console.log('Geolocation is not supported by this browser.');
+            }
+        });
+</script> -->

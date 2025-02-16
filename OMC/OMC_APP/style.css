@@ -1,0 +1,349 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-left: 1%;
+    background-color: #b8b0b0;
+}
+button,
+select {
+    flex: 0 0 auto;
+    /* Let the width of each button be determined by its content */
+    margin-right: 5px;
+    /* Add space between buttons */
+    margin-bottom: 5px;
+    /* Add space between rows */
+    /* padding: 5px; */
+    /* margin: 3px; */
+    font-size: 1rem;
+    /* Adjust the font size as needed */
+}
+
+/* #map {
+    height: 400px;
+    /* You can set this to the desired value 
+    width: 100%;
+} */
+
+#map {
+    height: calc(100vh - 275px);
+    /* Subtract the fixed height from the viewport height */
+    width: 100%;
+}
+
+.status-circle {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: #32dd37;
+}
+
+.info-container {
+    display: flex;
+    align-items: center;
+    padding-left: 1%;
+    background-color: #b8b0b0;
+}
+
+.info-label {
+    display: flex;
+    justify-content: flex-start;
+    /* Align to the start to use only required space */
+    align-items: center;
+    /* background-color: #f0f0f0; */
+    /* border: 1px solid #ddd; */
+    /* padding: 10px; */
+    margin: 5px 0;
+    /* Set a max-width if you want to limit how wide they can get, for example: */
+    max-width: 600px;
+    /* or 50% or any other value */
+    /* If you want the labels to be less wide on larger screens: */
+    width: auto;
+}
+
+.info-title {
+    margin-right: 10px;
+    /* Add some space between title and value */
+    /* You can also set a width here if you want a uniform size for titles */
+    min-width: 150px;
+    /* Adjust as needed */
+}
+
+.info-value {
+    /* Flex-grow allows the value to take up the leftover space if needed */
+    display: flex;
+    text-align: left;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    border: 3px solid transparent;
+    /* border-left: 2px solid #000; */
+    /* Keeps character width consistent */
+}
+
+.info-value-right{
+    flex-grow: 1;
+    /* display: flex; */
+    text-align: right;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    border: 3px solid transparent;
+}
+
+#dropdownMenu {
+    margin: 10px;
+}
+
+#actionSelect {
+    padding: 5px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+#hamburger {
+    cursor: pointer;
+    font-size: 24px;
+    /* Icon size - adjust as necessary */
+    width: 24px;
+    /* Width of the clickable area - should match the size of the content or icon */
+    height: 24px;
+    /* Height of the clickable area - should match the size of the content or icon */
+    padding: 10px;
+    /* Padding - adjust as necessary for visual spacing, does not affect the hitbox */
+    display: inline-block;
+    /* or 'block' if you want the element to be a block-level element */
+    line-height: 24px;
+    /* To vertically center the content if needed */
+    text-align: center;
+    /* To horizontally center the content if needed */
+}
+
+#sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    /* Hide sidebar by default */
+    height: 100%;
+    background-color: #b8b0b0;
+    overflow-x: hidden;
+    transition: 0.5s;
+    /* Smooth transition */
+    padding-top: 60px;
+    z-index: 1000;
+}
+
+#sidebar button {
+    display: block;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+
+    button,
+    select {
+        flex: 0 0 auto;
+        
+        margin-right: 5px;
+        
+        margin-bottom: 5px;
+        
+        font-size: 1rem;
+    }
+
+        /* flex: 0 0 auto;
+           
+            margin-right: 5px;
+          
+            margin-bottom: 5px;
+            
+            font-size: 1rem; */
+           
+
+        /* .info-container {
+            display: flex;
+            align-items: center;
+            padding-left: 1%;
+            background-color: #b8b0b0;
+        }
+    
+        .info-label {
+            display: flex;
+            justify-content: flex-start;
+            
+            align-items: center;
+           
+            margin: 5px 0;
+            
+            max-width: 600px;
+           
+            width: auto;
+        }
+    
+        .info-title {
+            margin-right: 10px;
+           
+            min-width: 150px;
+            
+        }
+    
+        .info-value {
+            
+            display: flex;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border: 3px solid transparent;
+            
+        } */
+
+
+    #map {
+        height: 50vh;
+       
+    }
+
+   
+}
+
+/* #latValue,
+#lngValue {
+    padding: 10px;
+    margin: 5px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+} */
+
+.status-icons {
+    display: flex;
+    align-items: center;
+    padding-left: 1%;
+    background-color: #b8b0b0;
+}
+.battery-container {
+    display: flex;
+    /* border: 2px solid #000; */
+    align-items: center;
+    border: 2px solid transparent;
+    /* padding-left: 4%; */
+}
+.battery {
+    width: 8px;
+    /* adjust size as needed */
+    height: 16px;
+    /* adjust size as needed */
+    /* background-color: #ddd; */
+    /* adjust background color */
+    /* border-radius: 10px; */
+    border: 2px solid black;
+    border-radius: 2px;
+    position: relative;
+}
+
+.hBattery-level {
+    /* height: 100%; */
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    background-color: #32dd37;
+    /* adjust color for charged level */
+    border-radius: 2px;
+}
+
+.rBattery-level {
+    /* height: 100%; */
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    background-color: #32dd37;
+    /* adjust color for charged level */
+    border-radius: 2px;
+}
+
+.battery-icon {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    /* Adjust size for vertical battery */
+    height: 1px;
+    /* Adjust size for vertical battery */
+    background-color: black;
+    border: 1px solid black;
+    border-radius: 1px;
+}
+
+.battery-percentage {
+    font-size: 12px;
+  
+}
+
+/* Signal Container */
+.signal-container {
+    display: flex;
+    /* border: 2px solid #000; */
+    align-items: center;
+    border: 2px solid transparent;
+    /* padding-left: 4%; */
+}
+
+/* RSSI Value */
+.rssi-value {
+    font-size: 12px;
+    /* padding-left: 30%; */
+}
+
+.sat-container {
+    display: flex;
+    /* border: 2px solid #000; */
+    align-items: center;
+    border: 2px solid transparent;
+    /* padding-left: 4%; */
+}
+
+.sat-value{
+    font-size: 12px;
+    /* padding-left: 30%; */
+}
+
+.light-container{
+    display: flex;
+    /* border: 2px solid #000; */
+    align-items: center;
+    border: 2px solid transparent;
+    /* padding-left: 4%; */
+}
+
+.light-value{
+    font-size: 12px;
+    /* padding-left: 30%; */
+}
