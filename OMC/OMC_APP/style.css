@@ -1,119 +1,118 @@
+/* 
+  File: style.css
+  Description: Stylesheet for the OzarkMountainCat web app.
+  This file contains global styles, layout, and responsive design rules 
+  for the user interface including the map container, sidebar, buttons, 
+  status icons, and info display elements.
+*/
+
+/* Global styles for the body element */
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
+    font-family: Arial, sans-serif; /* Use Arial or sans-serif fonts for readability */
+    margin: 0;                      /* Remove default margin */
+    padding: 0;                     /* Remove default padding */
+    background-color: #f4f4f4;        /* Set a light gray background color */
 }
 
+/* Style for the main heading (h1) */
 h1 {
-    color: #333;
-    text-align: center;
+    color: #333;           /* Dark gray text color for contrast */
+    text-align: center;    /* Center-align the heading */
 }
+
+/* Container for interactive buttons */
 .button-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    padding-left: 1%;
-    background-color: #b8b0b0;
+    display: flex;              /* Use flexbox layout */
+    flex-wrap: wrap;            /* Allow buttons to wrap onto multiple lines */
+    align-items: center;        /* Vertically center items */
+    padding-left: 1%;           /* Small left padding */
+    background-color: #b8b0b0;    /* Background color for the container */
 }
+
+/* Styles for button and select elements */
 button,
 select {
-    flex: 0 0 auto;
-    /* Let the width of each button be determined by its content */
-    margin-right: 5px;
-    /* Add space between buttons */
-    margin-bottom: 5px;
-    /* Add space between rows */
-    /* padding: 5px; */
-    /* margin: 3px; */
-    font-size: 1rem;
-    /* Adjust the font size as needed */
+    flex: 0 0 auto;             /* Do not allow flex grow/shrink */
+    margin-right: 5px;          /* Space between buttons horizontally */
+    margin-bottom: 5px;         /* Space between rows of buttons */
+    font-size: 1rem;            /* Set font size to 1 rem */
 }
 
-/* #map {
-    height: 400px;
-    /* You can set this to the desired value 
-    width: 100%;
-} */
-
+/* Map container styling */
 #map {
+    /* Set the map height to the viewport height minus a fixed offset (275px) to allow space for other UI elements */
     height: calc(100vh - 275px);
-    /* Subtract the fixed height from the viewport height */
-    width: 100%;
+    width: 100%;                /* Full width */
 }
 
+/* Styles for the connection status circle */
 .status-circle {
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    margin-left: 10px;
-    vertical-align: middle;
+    display: inline-block;      /* Inline block for proper sizing */
+    width: 15px;                /* Fixed width */
+    height: 15px;               /* Fixed height */
+    border-radius: 50%;         /* Make it a circle */
+    margin-left: 10px;          /* Left margin for spacing */
+    vertical-align: middle;     /* Vertically center with text */
 }
 
+/* Red status circle for disconnected state */
 .red {
     background-color: red;
 }
 
+/* Green status circle for connected state */
 .green {
     background-color: #32dd37;
 }
 
+/* Styles for the information container on the second info line */
 .info-container {
-    display: flex;
-    align-items: center;
-    padding-left: 1%;
-    background-color: #b8b0b0;
+    display: flex;               /* Use flexbox for layout */
+    align-items: center;         /* Vertically center items */
+    padding-left: 1%;            /* Left padding */
+    background-color: #b8b0b0;     /* Background color for the container */
 }
 
+/* Styles for individual information labels */
 .info-label {
-    display: flex;
-    justify-content: flex-start;
-    /* Align to the start to use only required space */
-    align-items: center;
-    /* background-color: #f0f0f0; */
-    /* border: 1px solid #ddd; */
-    /* padding: 10px; */
-    margin: 5px 0;
-    /* Set a max-width if you want to limit how wide they can get, for example: */
-    max-width: 600px;
-    /* or 50% or any other value */
-    /* If you want the labels to be less wide on larger screens: */
-    width: auto;
+    display: flex;               /* Use flexbox layout */
+    justify-content: flex-start; /* Align content to the start */
+    align-items: center;         /* Vertically center items */
+    margin: 5px 0;               /* Vertical margin for spacing */
+    max-width: 600px;            /* Maximum width constraint */
+    width: auto;                 /* Automatic width */
 }
 
+/* Styles for titles in the info container */
 .info-title {
-    margin-right: 10px;
-    /* Add some space between title and value */
-    /* You can also set a width here if you want a uniform size for titles */
-    min-width: 150px;
-    /* Adjust as needed */
+    margin-right: 10px;          /* Space between title and value */
+    min-width: 150px;            /* Minimum width to ensure alignment */
 }
 
+/* Styles for the information values */
 .info-value {
-    /* Flex-grow allows the value to take up the leftover space if needed */
     display: flex;
     text-align: left;
-    font-family: 'Courier New', monospace;
+    font-family: 'Courier New', monospace; /* Monospace font for consistency */
     font-size: 12px;
-    border: 3px solid transparent;
-    /* border-left: 2px solid #000; */
-    /* Keeps character width consistent */
+    border: 3px solid transparent;         /* Transparent border for potential emphasis */
 }
 
-.info-value-right{
-    flex-grow: 1;
-    /* display: flex; */
+/* Styles for information values aligned to the right */
+.info-value-right {
+    flex-grow: 1;                /* Allow to take remaining space */
     text-align: right;
     font-family: 'Courier New', monospace;
     font-size: 12px;
     border: 3px solid transparent;
 }
 
+/* Dropdown menu styling */
 #dropdownMenu {
     margin: 10px;
 }
 
+/* Styling for action selection dropdown */
 #actionSelect {
     padding: 5px;
     font-size: 16px;
@@ -121,229 +120,151 @@ select {
     border: 1px solid #ccc;
 }
 
+/* Styling for the hamburger menu icon */
 #hamburger {
-    cursor: pointer;
-    font-size: 24px;
-    /* Icon size - adjust as necessary */
-    width: 24px;
-    /* Width of the clickable area - should match the size of the content or icon */
-    height: 24px;
-    /* Height of the clickable area - should match the size of the content or icon */
-    padding: 10px;
-    /* Padding - adjust as necessary for visual spacing, does not affect the hitbox */
-    display: inline-block;
-    /* or 'block' if you want the element to be a block-level element */
-    line-height: 24px;
-    /* To vertically center the content if needed */
-    text-align: center;
-    /* To horizontally center the content if needed */
+    cursor: pointer;         /* Pointer cursor for interactivity */
+    font-size: 24px;         /* Large font size for visibility */
+    width: 24px;             /* Set fixed width */
+    height: 24px;            /* Set fixed height */
+    padding: 10px;           /* Padding for better clickability */
+    display: inline-block;   /* Display as inline-block */
+    line-height: 24px;       /* Vertical alignment for content */
+    text-align: center;      /* Center the text horizontally */
 }
 
+/* Styling for the sidebar */
 #sidebar {
-    width: 250px;
-    position: fixed;
+    width: 250px;            /* Fixed width for sidebar */
+    position: fixed;         /* Fixed position */
     top: 0;
-    left: -250px;
-    /* Hide sidebar by default */
-    height: 100%;
-    background-color: #b8b0b0;
-    overflow-x: hidden;
-    transition: 0.5s;
-    /* Smooth transition */
-    padding-top: 60px;
-    z-index: 1000;
+    left: -250px;            /* Initially hidden off-screen */
+    height: 100%;            /* Full height */
+    background-color: #b8b0b0; /* Background color */
+    overflow-x: hidden;      /* Hide horizontal overflow */
+    transition: 0.5s;        /* Smooth transition when toggling */
+    padding-top: 60px;       /* Top padding for spacing */
+    z-index: 1000;           /* Ensure sidebar is on top */
 }
 
+/* Sidebar button styling */
 #sidebar button {
-    display: block;
-    padding: 10px;
-    width: 100%;
-    border: none;
-    background: none;
-    text-align: left;
-    cursor: pointer;
-    outline: none;
+    display: block;          /* Block-level buttons */
+    padding: 10px;           /* Padding for clickable area */
+    width: 100%;             /* Full width */
+    border: none;            /* No border */
+    background: none;         /* Transparent background */
+    text-align: left;        /* Align text to the left */
+    cursor: pointer;         /* Pointer cursor */
+    outline: none;           /* Remove outline */
 }
 
-/* Responsive design for smaller screens */
+/* Responsive design: adjustments for screens with max width of 600px */
 @media (max-width: 600px) {
-
     button,
     select {
         flex: 0 0 auto;
-        
         margin-right: 5px;
-        
         margin-bottom: 5px;
-        
         font-size: 1rem;
     }
 
-        /* flex: 0 0 auto;
-           
-            margin-right: 5px;
-          
-            margin-bottom: 5px;
-            
-            font-size: 1rem; */
-           
-
-        /* .info-container {
-            display: flex;
-            align-items: center;
-            padding-left: 1%;
-            background-color: #b8b0b0;
-        }
-    
-        .info-label {
-            display: flex;
-            justify-content: flex-start;
-            
-            align-items: center;
-           
-            margin: 5px 0;
-            
-            max-width: 600px;
-           
-            width: auto;
-        }
-    
-        .info-title {
-            margin-right: 10px;
-           
-            min-width: 150px;
-            
-        }
-    
-        .info-value {
-            
-            display: flex;
-            text-align: left;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            border: 3px solid transparent;
-            
-        } */
-
-
     #map {
-        height: 50vh;
-       
+        height: 50vh; /* Set map height to 50% of viewport height on small screens */
     }
-
-   
 }
 
-/* #latValue,
-#lngValue {
-    padding: 10px;
-    margin: 5px;
-    background-color: #f0f0f0;
-    border: 1px solid #ddd;
-} */
-
+/* Styles for status icons container */
 .status-icons {
     display: flex;
     align-items: center;
     padding-left: 1%;
     background-color: #b8b0b0;
 }
+
+/* Styles for battery container */
 .battery-container {
     display: flex;
-    /* border: 2px solid #000; */
     align-items: center;
     border: 2px solid transparent;
-    /* padding-left: 4%; */
 }
+
+/* Styles for battery element */
 .battery {
-    width: 8px;
-    /* adjust size as needed */
-    height: 16px;
-    /* adjust size as needed */
-    /* background-color: #ddd; */
-    /* adjust background color */
-    /* border-radius: 10px; */
-    border: 2px solid black;
-    border-radius: 2px;
-    position: relative;
+    width: 8px;              /* Width of the battery indicator */
+    height: 16px;            /* Height of the battery indicator */
+    border: 2px solid black; /* Battery border for visibility */
+    border-radius: 2px;      /* Slight rounding of corners */
+    position: relative;      /* For positioning inner elements */
 }
 
+/* Styling for harness battery level indicator */
 .hBattery-level {
-    /* height: 100%; */
     position: absolute;
     width: 100%;
     bottom: 0px;
-    background-color: #32dd37;
-    /* adjust color for charged level */
+    background-color: #32dd37; /* Green color for charged level */
     border-radius: 2px;
 }
 
+/* Styling for receiver battery level indicator */
 .rBattery-level {
-    /* height: 100%; */
     position: absolute;
     width: 100%;
     bottom: 0px;
     background-color: #32dd37;
-    /* adjust color for charged level */
     border-radius: 2px;
 }
 
+/* Styling for the battery icon displayed on top of the battery element */
 .battery-icon {
     position: absolute;
     top: -5px;
     left: 50%;
     transform: translateX(-50%);
     width: 3px;
-    /* Adjust size for vertical battery */
     height: 1px;
-    /* Adjust size for vertical battery */
     background-color: black;
     border: 1px solid black;
     border-radius: 1px;
 }
 
+/* Styling for battery percentage text */
 .battery-percentage {
     font-size: 12px;
-  
 }
 
-/* Signal Container */
+/* Signal container styling */
 .signal-container {
     display: flex;
-    /* border: 2px solid #000; */
     align-items: center;
     border: 2px solid transparent;
-    /* padding-left: 4%; */
 }
 
-/* RSSI Value */
+/* RSSI value styling */
 .rssi-value {
     font-size: 12px;
-    /* padding-left: 30%; */
 }
 
+/* Satellite container styling */
 .sat-container {
     display: flex;
-    /* border: 2px solid #000; */
     align-items: center;
     border: 2px solid transparent;
-    /* padding-left: 4%; */
 }
 
-.sat-value{
+/* Satellite value styling */
+.sat-value {
     font-size: 12px;
-    /* padding-left: 30%; */
 }
 
-.light-container{
+/* Light container styling */
+.light-container {
     display: flex;
-    /* border: 2px solid #000; */
     align-items: center;
     border: 2px solid transparent;
-    /* padding-left: 4%; */
 }
 
-.light-value{
+/* Light value styling */
+.light-value {
     font-size: 12px;
-    /* padding-left: 30%; */
 }
