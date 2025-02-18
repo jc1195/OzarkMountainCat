@@ -222,16 +222,64 @@ document.addEventListener('DOMContentLoaded', (event) => {
     }
 });
 
+// /**
+//  * @function setLightColor
+//  * @description Reads the selected light color from the UI and sends a command to the BLE device.
+//  */
+// function setLightColor() {
+//     var selectedColor = document.getElementById('lightColorSelect').value;
+//     console.log('Selected Light Color:', selectedColor);
+
+//     if (bleDevice && bleDevice.gatt.connected) {
+//         sendCommandToBleDevice(selectedColor);
+//     } else {
+//         console.error('Bluetooth device is not connected');
+//     }
+// }
+
 /**
  * @function setLightColor
- * @description Reads the selected light color from the UI and sends a command to the BLE device.
+ * @description Reads the selected color from the dropdown, maps it to specific RGB values,
+ * builds a JSON command with msgType 3 (LED command), and sends the command via BLE.
  */
 function setLightColor() {
-    var selectedColor = document.getElementById('lightColorSelect').value;
-    console.log('Selected Light Color:', selectedColor);
+    // Get the selected color code from the dropdown
+    var selectedCode = document.getElementById('lightColorSelect').value;
+    console.log('Selected Light Color:', selectedCode);
+    
+    // Mapping from dropdown color codes to RGB values.
+    // Modify these values as needed to match your desired colors.
+    const colorMap = {
+        'M': { r: 255, g: 0,   b: 255 }, // Rainbow (placeholder value)
+        'L': { r: 255, g: 0,   b: 0   }, // Red
+        'K': { r: 255, g: 192, b: 203 }, // Pink
+        'J': { r: 128, g: 0,   b: 128 }, // Purple
+        'I': { r: 255, g: 165, b: 0   }, // Orange
+        'H': { r: 255, g: 140, b: 0   }, // Bright Orange
+        'G': { r: 255, g: 255, b: 0   }, // Yellow
+        'F': { r: 0,   g: 255, b: 0   }, // Bright Green
+        'E': { r: 0,   g: 128, b: 0   }, // Green
+        'D': { r: 0,   g: 0,   b: 255 }, // Blue
+        'C': { r: 0,   g: 255, b: 255 }, // Cyan
+        'B': { r: 255, g: 255, b: 255 }, // White
+        'A': { r: 0,   g: 0,   b: 0   }  // Off
+    };
 
+    // If the BLE device is connected, send the new JSON command
     if (bleDevice && bleDevice.gatt.connected) {
-        sendCommandToBleDevice(selectedColor);
+        // Retrieve the RGB values from the mapping. If the code isn't found, default to "Off" (black).
+        let color = colorMap[selectedCode] || { r: 0, g: 0, b: 0 };
+
+        // Build the JSON command with msgType 3 (for LED command) and the RGB values.
+        let command = {
+            msgType: 3,  // MSG_LED as per your specification.
+            r: color.r,
+            g: color.g,
+            b: color.b
+        };
+
+        // Send the JSON command using your helper function.
+        sendJsonCommandToBleDevice(command);
     } else {
         console.error('Bluetooth device is not connected');
     }
@@ -328,36 +376,6 @@ function setPwrMode() {
     }
 }
 
-/**
- * @function pickColorAndTurnOnLight
- * @description Prompts the user to select a color and sends a corresponding command to the BLE device.
- */
-function pickColorAndTurnOnLight() {
-    const colorMap = {
-        'Rainbow': 'M',
-        'Red': 'L',
-        'Pink': 'K',
-        'Purple': 'J',
-        'Orange': 'I',
-        'BrightOrange': 'H',
-        'Yellow': 'G',
-        'Bright Green': 'F',
-        'Green': 'E',
-        'Blue': 'D',
-        'Cyan': 'C',
-        'White': 'B',
-        'Off': 'A'
-    };
-
-    let colorChoice = prompt("Enter color (Rainbow, Red, Pink, etc.):");
-    let command = colorMap[colorChoice];
-
-    if (command && bleDevice && bleDevice.gatt.connected) {
-        sendCommandToBleDevice(command);
-    } else {
-        console.error('Invalid color choice or device not connected');
-    }
-}
 
 /**
  * @function sendJsonCommandToBleDevice

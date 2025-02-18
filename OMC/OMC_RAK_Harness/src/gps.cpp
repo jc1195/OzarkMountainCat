@@ -17,29 +17,31 @@ bool GPSHandler::begin() {
     digitalWrite(WB_IO2, 1);
     delay(100);
 
+    
+
     // Initialize GNSS using the SparkFun library.
     if (myGNSS.begin() == false) {
-        Serial.println("Failed to initialize GNSS!");
+        //Serial.println("Failed to initialize GNSS!");
         return false;
     }
     // Optional: set high precision mode (commented out).
     // if (myGNSS.setHighPrecisionMode(true) == false) {
-    //     Serial.println("Failed to set high precision mode!");
+    //     //Serial.println("Failed to set high precision mode!");
     //     return false;
     // }
     // Set the power management mode to full power.
-    if (myGNSS.setPowerManagement(SFE_UBLOX_PMS_MODE_FULLPOWER) == false) {
-        Serial.println("Failed to set power management!");
-        return false;
-    }
+    // if (myGNSS.setPowerManagement(SFE_UBLOX_PMS_MODE_FULLPOWER) == false) {
+    //     //Serial.println("Failed to set power management!");
+    //     return false;
+    // }
 
-    // Save the GNSS configuration.
-    myGNSS.saveConfiguration();
+    // // Save the GNSS configuration.
+    // myGNSS.saveConfiguration();
 
     // Uncomment if using a LED indicator for GNSS status.
     // pinMode(LED_BLUE, OUTPUT);
     // digitalWrite(LED_BLUE, HIGH);
-    Serial.println("GNSS initialized.");
+    //Serial.println("GNSS initialized.");
     return true;
 }
 
@@ -66,6 +68,7 @@ void GPSHandler::gpsOff() {
  */
 void GPSHandler::update() {
     // Update GNSS data using the SparkFun library.
+    ////Serial.println("Updating GPS data...");
     if (myGNSS.getGnssFixOk()) {
         fix = true;
         // Convert raw latitude and longitude values.

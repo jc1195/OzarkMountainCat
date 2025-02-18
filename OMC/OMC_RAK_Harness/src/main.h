@@ -9,7 +9,6 @@
  */
 
 #include <Arduino.h>
-#include <SparkFun_u-blox_GNSS_Arduino_Library.h>
 #include <Adafruit_NeoPixel.h>
 #include <FreeRTOS.h>
 #include <semphr.h>
@@ -124,12 +123,12 @@ struct ReceivedPacket{
     double alt;            /**< Altitude. */
     int16_t rssi;          /**< RSSI (signal strength). */
     int8_t snr;            /**< SNR value. */
-    int8_t r;              /**< Red channel value (for LED). */
-    int8_t g;              /**< Green channel value (for LED). */
-    int8_t b;              /**< Blue channel value (for LED). */
+    uint8_t r;              /**< Red channel value (for LED). */
+    uint8_t g;              /**< Green channel value (for LED). */
+    uint8_t b;              /**< Blue channel value (for LED). */
     bool ack;              /**< Acknowledgement flag. */
-    float rBatt;           /**< Receiver battery level. */
-    float hBatt;           /**< Harness battery level. */
+    uint8_t rBatt;           /**< Receiver battery level. */
+    uint8_t hBatt;           /**< Harness battery level. */
 };
 
 /**
@@ -177,3 +176,5 @@ extern ReceivedPacket receivedPacket;
  * @brief Global instance of the current event type.
  */
 extern EventType eventType;
+
+extern SoftwareTimer taskWakeupTimer;

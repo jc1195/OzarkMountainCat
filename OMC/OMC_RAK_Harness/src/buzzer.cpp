@@ -87,7 +87,7 @@ int length = 0;
  * Configures the buzzer pin as an output and calculates the length of the tune array.
  */
 void BuzzerHandler::begin() {
-  // Serial.end(); // (Optional: stop serial communication if needed)
+  // //Serial.end(); // (Optional: stop //Serial communication if needed)
   pinMode(PIN_BUZZER, OUTPUT);
   // Optionally add PWM support to the buzzer pin:
   // HwPWM0.addPin(PIN_BUZZER);

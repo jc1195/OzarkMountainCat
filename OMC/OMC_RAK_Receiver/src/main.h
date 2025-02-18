@@ -79,9 +79,9 @@ struct ReceivedPacket{
     double alt;
     int16_t rssi;
     int8_t snr;
-    int8_t r;
-    int8_t g;
-    int8_t b;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
     bool ack;
     float rBatt; //Receiver battery
     float hBatt; //Harness battery
