@@ -8,11 +8,11 @@
 
 // Global variables
 /** @global {mapboxgl.Map} map - Global variable to hold the Mapbox map instance */
-var map; 
+var map;
 window.map = map;
 
 /** @global {mapboxgl.Marker} trackerMarker - Global variable to hold the tracker's map marker */
-var trackerMarker; 
+var trackerMarker;
 /** @global {mapboxgl.Marker} userLocationMarker - Global variable to hold the user's location marker */
 var userLocationMarker;
 /** @global {BluetoothDevice|null} bleDevice - Global variable to hold the connected BLE device */
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
     // When the map loads, initialize Mapbox GL Draw and add additional layers
-    map.on('load', function() {
+    map.on('load', function () {
         draw = new MapboxDraw({
             displayControlsDefault: false,
             controls: {
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         });
 
         // Clear the geolocation watch when the page is unloaded
-        window.onbeforeunload = function() {
+        window.onbeforeunload = function () {
             navigator.geolocation.clearWatch(locationWatchID);
         };
     } else {
@@ -147,48 +147,48 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // BLE connection setup
     let isConnected = false;
     const connectButton = document.getElementById('connectButton');
-    connectButton.addEventListener('click', function() {
+    connectButton.addEventListener('click', function () {
         console.log('Connect button clicked');
 
         navigator.bluetooth.requestDevice({
             filters: [{ name: 'Mount' }],
             optionalServices: [pBLE_PrimaryGUID, pBLE_CharacteristicGUID] // Use both service UUIDs
         })
-        .then(device => {
-            bleDevice = device;
-            console.log('Connecting to device...');
-            device.addEventListener('gattserverdisconnected', onDisconnected);
-            return device.gatt.connect();
-        })
-        .then(server => {
-            console.log('Getting primary GATT Service...');
-            return server.getPrimaryService(pBLE_PrimaryGUID);
-        })
-        .then(secondService => {
-            console.log('Getting second GATT Characteristic...');
-            return secondService.getCharacteristic(pBLE_CharacteristicGUID);
-        })
-        .then(characteristic => {
-            console.log('Starting notifications...');
-            commandCharacteristic = characteristic;
-            return characteristic.startNotifications();
-        })
-        .then(characteristic => {
-            console.log('Notifications started.');
-            characteristic.addEventListener('characteristicvaluechanged', handleDataReceived);
-            isConnected = true;
-            updateConnectionStatus(isConnected);
-        })
-        .catch(error => {
-            console.error('Connection failed', error);
-            isConnected = false;
-            updateConnectionStatus(isConnected);
-        });
+            .then(device => {
+                bleDevice = device;
+                console.log('Connecting to device...');
+                device.addEventListener('gattserverdisconnected', onDisconnected);
+                return device.gatt.connect();
+            })
+            .then(server => {
+                console.log('Getting primary GATT Service...');
+                return server.getPrimaryService(pBLE_PrimaryGUID);
+            })
+            .then(secondService => {
+                console.log('Getting second GATT Characteristic...');
+                return secondService.getCharacteristic(pBLE_CharacteristicGUID);
+            })
+            .then(characteristic => {
+                console.log('Starting notifications...');
+                commandCharacteristic = characteristic;
+                return characteristic.startNotifications();
+            })
+            .then(characteristic => {
+                console.log('Notifications started.');
+                characteristic.addEventListener('characteristicvaluechanged', handleDataReceived);
+                isConnected = true;
+                updateConnectionStatus(isConnected);
+            })
+            .catch(error => {
+                console.error('Connection failed', error);
+                isConnected = false;
+                updateConnectionStatus(isConnected);
+            });
     });
 
     // BLE disconnect button event listener
     const disconnectButton = document.getElementById('disconnectButton');
-    disconnectButton.addEventListener('click', function() {
+    disconnectButton.addEventListener('click', function () {
         if (bleDevice && bleDevice.gatt.connected) {
             bleDevice.gatt.disconnect();
             console.log('Device disconnected');
@@ -246,23 +246,23 @@ function setLightColor() {
     // Get the selected color code from the dropdown
     var selectedCode = document.getElementById('lightColorSelect').value;
     console.log('Selected Light Color:', selectedCode);
-    
+
     // Mapping from dropdown color codes to RGB values.
     // Modify these values as needed to match your desired colors.
     const colorMap = {
-        'M': { r: 255, g: 0,   b: 255 }, // Rainbow (placeholder value)
-        'L': { r: 255, g: 0,   b: 0   }, // Red
-        'K': { r: 255, g: 192, b: 203 }, // Pink
-        'J': { r: 128, g: 0,   b: 128 }, // Purple
-        'I': { r: 255, g: 165, b: 0   }, // Orange
-        'H': { r: 255, g: 140, b: 0   }, // Bright Orange
-        'G': { r: 255, g: 255, b: 0   }, // Yellow
-        'F': { r: 0,   g: 255, b: 0   }, // Bright Green
-        'E': { r: 0,   g: 128, b: 0   }, // Green
-        'D': { r: 0,   g: 0,   b: 255 }, // Blue
-        'C': { r: 0,   g: 255, b: 255 }, // Cyan
+        'M': { r: 255, g: 0, b: 255 }, // Rainbow (placeholder value)
+        'L': { r: 255, g: 0, b: 0 }, // Red
+        'K': { r: 128, g: 50, b: 128 }, // Pink
+        'J': { r: 128, g: 0, b: 128 }, // Purple
+        'I': { r: 255, g: 165, b: 0 }, // Orange
+        'H': { r: 255, g: 140, b: 0 }, // Bright Orange
+        'G': { r: 255, g: 255, b: 0 }, // Yellow
+        'F': { r: 0, g: 255, b: 0 }, // Bright Green
+        'E': { r: 0, g: 128, b: 0 }, // Green
+        'D': { r: 0, g: 0, b: 255 }, // Blue
+        'C': { r: 0, g: 255, b: 255 }, // Cyan
         'B': { r: 255, g: 255, b: 255 }, // White
-        'A': { r: 0,   g: 0,   b: 0   }  // Off
+        'A': { r: 0, g: 0, b: 0 }  // Off
     };
 
     // If the BLE device is connected, send the new JSON command
@@ -302,10 +302,10 @@ function toggleSidebar() {
  * @event Document#click
  * @description Hides the sidebar when a click occurs outside of it.
  */
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function (event) {
     var sidebar = document.getElementById('sidebar');
     var hamburger = document.getElementById('hamburger');
-    
+
     // If the click is outside the sidebar and hamburger, hide the sidebar.
     if (!sidebar.contains(event.target) && !hamburger.contains(event.target)) {
         sidebar.style.left = '-250px';
@@ -329,18 +329,31 @@ function turnOffLight() {
 }
 
 /**
- * @function turnOnBuzzer
+ * @function musicActions
  * @description Sends a JSON command via BLE to activate the buzzer.
  */
-function turnOnBuzzer() {
-    if (bleDevice && bleDevice.gatt.connected) {
-        let command = {
-            msgType: 2,
-            buzzer: true,
-        };
-        sendJsonCommandToBleDevice(command);
+function musicActions() {
+    var selectedCode = document.getElementById('musicSelect').value;
+
+    if (selectedCode == 1) {
+        if (bleDevice && bleDevice.gatt.connected) {
+            let command = {
+                msgType: 2,
+                buzzer: true,
+            };
+            sendJsonCommandToBleDevice(command);
+        }
+    } else {
+        if (bleDevice && bleDevice.gatt.connected) {
+            let command = {
+                msgType: 2,
+                buzzer: false,
+            };
+            sendJsonCommandToBleDevice(command);
+        }
     }
 }
+
 
 /**
  * @function turnOffBuzzer
@@ -391,14 +404,14 @@ function sendJsonCommandToBleDevice(command) {
         console.error('Command characteristic not set');
         return;
     }
-    
+
     // Convert the command object to a JSON string.
     let jsonString = JSON.stringify(command);
-    
+
     // Encode the JSON string into a Uint8Array.
     let encoder = new TextEncoder();
     let encodedCommand = encoder.encode(jsonString);
-    
+
     // Write the encoded command to the BLE characteristic.
     commandCharacteristic.writeValue(encodedCommand)
         .then(() => {
@@ -506,7 +519,7 @@ function pointToTile(lat, lon, zoom) {
 /**
  * @description Event listener for the "checkDownloadButton" to check for downloaded maps.
  */
-document.getElementById('checkDownloadButton').addEventListener('click', function() {
+document.getElementById('checkDownloadButton').addEventListener('click', function () {
     var mapName = prompt("Enter the map name to check:");
     if (mapName) {
         getTilesForMap(mapName);
@@ -524,7 +537,7 @@ document.getElementById('downloadMapButton').addEventListener('click', async fun
         alert("Download cancelled: You must provide a name for the map.");
         return;
     }
-    
+
     var bounds = draw.getAll().features[0].geometry.coordinates[0];
     var minZoom = 9;
     var maxZoom = 12;
@@ -538,7 +551,7 @@ document.getElementById('downloadMapButton').addEventListener('click', async fun
     console.log(flatBounds[0]);
     console.log(flatBounds[1]);
     urls = getTileUrls(flatBounds, minZoom, maxZoom);
-    
+
     for (const url of urls) {
         console.log(`Downloading tile from: ${url}`);
         try {
@@ -560,17 +573,17 @@ document.getElementById('downloadMapButton').addEventListener('click', async fun
  */
 function downloadTile(url, mapName) {
     console.log(`Starting download for ${url}`);
-  return fetch(url)
-    .then(response => {
-      if (!response.ok) throw new Error('Network response was not ok');
-      return response.blob();
-    })
-    .then(blob => {
-      storeTileInIndexedDB(blob, url, mapName);
-    })
-    .catch(error => {
-      console.error('There has been a problem with your fetch operation:', error);
-    });
+    return fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.blob();
+        })
+        .then(blob => {
+            storeTileInIndexedDB(blob, url, mapName);
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
 }
 
 /**
@@ -582,7 +595,7 @@ function downloadTile(url, mapName) {
  */
 function storeTileInIndexedDB(blob, url, mapName) {
     var open = indexedDB.open('MyDatabase', pDBVersionNumber);
-    open.onupgradeneeded = function(event) {
+    open.onupgradeneeded = function (event) {
         var db = event.target.result;
         var store;
         if (!db.objectStoreNames.contains('MyObjectStore')) {
@@ -595,7 +608,7 @@ function storeTileInIndexedDB(blob, url, mapName) {
         }
     };
 
-    open.onsuccess = function() {
+    open.onsuccess = function () {
         var db = open.result;
         var tx = db.transaction('MyObjectStore', 'readwrite');
         var store = tx.objectStore('MyObjectStore');
@@ -606,16 +619,16 @@ function storeTileInIndexedDB(blob, url, mapName) {
             mapName: mapName
         };
         store.put(item);
-        tx.oncomplete = function() {
+        tx.oncomplete = function () {
             console.log('Tile stored successfully');
             db.close();
         };
-        tx.onerror = function(event) {
+        tx.onerror = function (event) {
             console.error('Error storing tile:', event.target.error);
         };
     };
 
-    open.onerror = function(event) {
+    open.onerror = function (event) {
         console.error('Error opening IndexedDB:', event.target.error);
     };
 }
@@ -627,17 +640,17 @@ function storeTileInIndexedDB(blob, url, mapName) {
  */
 function getTilesForMap(mapName) {
     var open = indexedDB.open('MyDatabase', pDBVersionNumber);
-    open.onsuccess = function() {
+    open.onsuccess = function () {
         var db = open.result;
         var tx = db.transaction('MyObjectStore', 'readonly');
         var store = tx.objectStore('MyObjectStore');
         var index = store.index('mapNameIndex');
         var query = index.getAll(mapName);
-        query.onsuccess = function() {
+        query.onsuccess = function () {
             var tiles = query.result;
             console.log('Tiles for ' + mapName + ':', tiles);
         };
-        tx.oncomplete = function() {
+        tx.oncomplete = function () {
             db.close();
         };
     };
@@ -650,23 +663,23 @@ function getTilesForMap(mapName) {
  */
 function deleteTilesForMap(mapName) {
     var open = indexedDB.open('MyDatabase', pDBVersionNumber);
-    open.onsuccess = function() {
+    open.onsuccess = function () {
         var db = open.result;
         var tx = db.transaction('MyObjectStore', 'readwrite');
         var store = tx.objectStore('MyObjectStore');
         var index = store.index('mapNameIndex');
         var query = index.getAllKeys(mapName);
-        query.onsuccess = function() {
+        query.onsuccess = function () {
             var keys = query.result;
-            keys.forEach(function(key) {
+            keys.forEach(function (key) {
                 store.delete(key);
             });
         };
-        tx.oncomplete = function() {
+        tx.oncomplete = function () {
             console.log('All tiles for ' + mapName + ' have been deleted.');
             db.close();
         };
-        tx.onerror = function(event) {
+        tx.onerror = function (event) {
             console.error('Error deleting tiles for ' + mapName, event.target.error);
         };
     };
@@ -684,12 +697,12 @@ function getTileFromIndexedDB(x, y, z) {
     const id = `https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/${z}/${x}/${y}?access_token=${pMapBox_Token}`;
     return new Promise((resolve, reject) => {
         const open = indexedDB.open('MyDatabase', pDBVersionNumber);
-        open.onsuccess = function() {
+        open.onsuccess = function () {
             const db = open.result;
             const transaction = db.transaction('MyObjectStore', 'readonly');
             const store = transaction.objectStore('MyObjectStore');
             const request = store.get(id);
-            request.onsuccess = function() {
+            request.onsuccess = function () {
                 const data = request.result;
                 if (data) {
                     const blob = data.blobData;
@@ -699,7 +712,7 @@ function getTileFromIndexedDB(x, y, z) {
                     reject(new Error('Tile not found in IndexedDB'));
                 }
             };
-            request.onerror = function() {
+            request.onerror = function () {
                 reject(new Error('Error fetching tile from IndexedDB'));
             };
         };
@@ -711,18 +724,18 @@ function getTileFromIndexedDB(x, y, z) {
  *
  * It attempts to load tiles from IndexedDB first; if not found, it falls back to network requests.
  */
-map.on('style.load', function() {
+map.on('style.load', function () {
     function loadTileFromIndexedDB(coords) {
         const id = `https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/${coords.z}/${coords.x}/${coords.y}?access_token=${pMapBox_Token}`;
         return new Promise((resolve, reject) => {
             const open = indexedDB.open('MyDatabase', pDBVersionNumber);
-            open.onsuccess = function() {
+            open.onsuccess = function () {
                 const db = open.result;
                 const transaction = db.transaction('MyObjectStore', 'readonly');
                 const store = transaction.objectStore('MyObjectStore');
                 const request = store.get(id);
-                
-                request.onsuccess = function() {
+
+                request.onsuccess = function () {
                     const data = request.result;
                     if (data) {
                         const localUrl = URL.createObjectURL(data.blobData);
@@ -732,7 +745,7 @@ map.on('style.load', function() {
                     }
                 };
 
-                request.onerror = function() {
+                request.onerror = function () {
                     reject(new Error('Error fetching tile from IndexedDB'));
                 };
             };
@@ -746,7 +759,7 @@ map.on('style.load', function() {
             map.removeSource(layer.source);
             map.addSource(layer.source, {
                 type: layer.type,
-                tiles: [function(coords) {
+                tiles: [function (coords) {
                     return loadTileFromIndexedDB(coords).catch(() => {
                         return originalTiles[0].replace('{x}', coords.x).replace('{y}', coords.y).replace('{z}', coords.z);
                     });
@@ -765,7 +778,7 @@ map.on('style.load', function() {
  * @returns {string} The constructed URL.
  */
 function constructTileURL(template, coords) {
-  return template.replace('{x}', coords.x)
-                 .replace('{y}', coords.y)
-                 .replace('{z}', coords.z);
+    return template.replace('{x}', coords.x)
+        .replace('{y}', coords.y)
+        .replace('{z}', coords.z);
 }

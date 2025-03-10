@@ -13,8 +13,9 @@
 #include <FreeRTOS.h>
 #include <semphr.h>
 #include <ArduinoJson.h>
-#include <SX126x-RAK4630.h> // RAK provided LoRa library
+//#include <SX126x-RAK4630.h> // RAK provided LoRa library
 #include <queue.h>
+#include "SX126x-Arduino.h"
 
 //#include <Tone.h>
 //#include <Adafruit_TinyUSB.h>
@@ -177,4 +178,4 @@ extern ReceivedPacket receivedPacket;
  */
 extern EventType eventType;
 
-extern SoftwareTimer taskWakeupTimer;
+//extern SoftwareTimer taskWakeupTimer;

@@ -15,7 +15,7 @@ BleHandler::BleHandler() {}
  * @param conn_handle The connection handle of the established connection.
  */
 void connect_callback(uint16_t conn_handle) {
-    //Serial.println("BLE connected!");
+    Serial.println("BLE connected!");
 }
 
 /**
@@ -27,8 +27,8 @@ void connect_callback(uint16_t conn_handle) {
  * @param reason The reason code for the disconnection.
  */
 void disconnect_callback(uint16_t conn_handle, uint8_t reason) {
-    //Serial.println("BLE disconnected!");
-    //Serial.println(reason);
+    Serial.println("BLE disconnected!");
+    Serial.println(reason);
 }
 
 /**
@@ -92,7 +92,7 @@ void BleHandler::begin()
     Bluefruit.Advertising.setFastTimeout(30);     // Fast advertising mode duration (seconds).
     Bluefruit.Advertising.start(0);               // 0 = Do not stop advertising after n seconds.
         
-    //Serial.println("BLE initialized. Advertising as 'MountainCat'...");
+    Serial.println("BLE initialized. Advertising as 'MountainCat'...");
 }
 
 /**
@@ -119,25 +119,25 @@ void BleHandler::update()
 void BleHandler::sendData(const uint8_t* data, uint16_t length)
 {
     if (!isConnected()) {
-        //Serial.println("BLE not connected, skipping sendData.");
+        Serial.println("BLE not connected, skipping sendData.");
         return;
     }
     // Debug print (commented out):
-    // //Serial.print("Sent BLE data: ");
+    // Serial.print("Sent BLE data: ");
     // for (int i = 0; i < length; i++) {
-    //     //Serial.write(data[i]);
+    //     Serial.write(data[i]);
     // }
 
     // If the data exceeds the max length of the characteristic, truncate it.
     if (length > mountainCatChar.getMaxLen()) {
         length = mountainCatChar.getMaxLen();
-        //Serial.println("Warning: Data truncated to characteristic max length.");
+        Serial.println("Warning: Data truncated to characteristic max length.");
     }
 
     // Notify the phone with the data so that it receives a 'characteristicvaluechanged' event.
     mountainCatChar.notify(data, length);
-    //Serial.print("Sent BLE data: ");
-    //Serial.println();
+    Serial.print("Sent BLE data: ");
+    Serial.println();
 }
 
 /**
@@ -166,17 +166,17 @@ bool BleHandler::isConnected()
  */
 void BleHandler::onWriteCallback(uint16_t conn_handle, BLECharacteristic* chr, uint8_t* data, uint16_t len)
 {
-    //Serial.print("BLE Write from conn_handle ");
-    //Serial.println(conn_handle);
+    Serial.print("BLE Write from conn_handle ");
+    Serial.println(conn_handle);
 
-    //Serial.print("Data length: ");
-    //Serial.println(len);
+    Serial.print("Data length: ");
+    Serial.println(len);
 
-    //Serial.print("Data: ");
+    Serial.print("Data: ");
     for (int i = 0; i < len; i++) {
-        //Serial.write(data[i]);
+        Serial.write(data[i]);
     }
-    //Serial.println();
+    Serial.println();
 
     // Here you can add code to interpret the incoming data as ASCII commands,
     // e.g., "RED", "LIVE", "POWER_SAVE", etc.

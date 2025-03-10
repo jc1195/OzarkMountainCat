@@ -8,7 +8,8 @@
 
  #include "lora.h"
  #include "main.h"
- 
+
+
  // Global variables and objects
  /**
   * @brief Buffer for storing received LoRa packets.
@@ -90,7 +91,7 @@
  {
      if (instance)
      {
-         //Serial.println("OnTxDone");
+         Serial.println("OnTxDone");
          // Additional post-transmission logic can be added here.
      }
      Radio.Rx(0); // Set radio to RX mode.
@@ -106,7 +107,7 @@
  {
      if (instance)
      {
-         //Serial.println("OnTxTimeout");
+         Serial.println("OnTxTimeout");
          // Handle timeout logic if necessary.
      }
      Radio.Rx(0); // Set radio to RX mode.
@@ -120,13 +121,13 @@
   */
  void LoraHandler::OnRxError(void)
  {
-     //Serial.println("OnRxError");
+     Serial.println("OnRxError");
      // Radio.Standby(); // Optionally set radio to standby.
  
      uint16_t irqStatus = readIrqStatus();
  
-     //Serial.print("IRQ Status: 0x");
-     //Serial.println(irqStatus, HEX);
+     Serial.print("IRQ Status: 0x");
+     Serial.println(irqStatus, HEX);
  
      // Clear the IRQ status.
      clearIrqStatus(irqStatus);
@@ -134,15 +135,15 @@
      // Check for common errors:
      if (irqStatus & 0x20)
      {
-         //Serial.println(" -> CRC error detected");
+         Serial.println(" -> CRC error detected");
      }
      if (irqStatus & 0x40)
      {
-         //Serial.println(" -> Header error detected (wrong length/SF/bandwidth?)");
+         Serial.println(" -> Header error detected (wrong length/SF/bandwidth?)");
      }
      if (irqStatus & 0x10)
      {
-         //Serial.println(" -> SyncWord error detected");
+         Serial.println(" -> SyncWord error detected");
      }
  
      // Re-enter receive mode.
@@ -157,7 +158,7 @@
   */
  void LoraHandler::OnRxTimeout(void)
  {
-     //Serial.println("OnRxTimeout");
+     Serial.println("OnRxTimeout");
      // Simply re-enter RX mode to keep listening.
      Radio.Rx(0);
  }
@@ -228,6 +229,20 @@
      RcvBuffer[n] = '\0';                       // Null-terminate the string.
  }
  
+ void DIOInterruptHandler()
+ {
+   if (uxSemaphoreGetCount(wakeSemaphore) == 0)
+   {
+     xSemaphoreGiveFromISR(wakeSemaphore, pdFALSE);
+     Serial.print("Lora After Give: ");
+     Serial.println(uxSemaphoreGetCount(wakeSemaphore));
+   }
+   else
+   {
+     Serial.println("Lora: Semaphore already given!");
+   }
+ }
+
  /**
   * @brief Callback function called when a LoRa packet is received.
   *
@@ -243,32 +258,13 @@
   */
  void LoraHandler::OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr)
  {
-     // Optional: wake device from sleep via semaphore (commented out below).
-     // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-     // xSemaphoreGiveFromISR(wakeSemaphore, &xHigherPriorityTaskWoken);
-     // portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-     
-
-     if (uxSemaphoreGetCount(wakeSemaphore) == 0) {
-        //Serial.print("Lora Wakeup: Semaphore Give: ");
-        //Serial.println(uxSemaphoreGetCount(wakeSemaphore));
-        taskWakeupTimer.stop();
-        //xSemaphoreGiveFromISR(wakeSemaphore, pdFALSE);
-        xSemaphoreGive(wakeSemaphore);
-    //  BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    //  xSemaphoreGiveFromISR(wakeSemaphore, &xHigherPriorityTaskWoken);
-    //  portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-
-      } else {
-        //Serial.println("Lora Wakeup: Semaphore already given!");
-      }
- 
+     DIOInterruptHandler();
      delay(10);
      OnRxToJSON(payload, rssi, snr);
      SerializeJSON(receivedPacket.msgType);
      Radio.Rx(RX_TIMEOUT_VALUE);
      packetReceived = true;
-     //Serial.println("Received Packet");
+     Serial.println("Received Packet");
      queEvent();
 }
 
@@ -285,44 +281,44 @@
    {
    case MSG_ALL_DATA:
      // No extra event queued.
-     //Serial.println("Que All Data");
+     Serial.println("Que All Data");
      break;
    case MSG_ACKNOWLEDGEMENT:
      // No extra event queued.
-     //Serial.println("Que Acknowledgement");
+     Serial.println("Que Acknowledgement");
      break;
    case MSG_BUZZER:
      eventType = EVENT_ACKNOWLEDGEMENT;
      xQueueSend(commandQueue, &eventType, 0);
      eventType = EVENT_BUZZER;
      xQueueSend(commandQueue, &eventType, 0);
-     //Serial.println("Que Buzzer");
+     Serial.println("Que Buzzer");
      break;
    case MSG_LED:
      eventType = EVENT_ACKNOWLEDGEMENT;
      xQueueSend(commandQueue, &eventType, 0);
      eventType = EVENT_LED;
      xQueueSend(commandQueue, &eventType, 0);
-     //Serial.println("Que LED");
+     Serial.println("Que LED");
      break;
    case MSG_RB_LED:
      eventType = EVENT_ACKNOWLEDGEMENT;
      xQueueSend(commandQueue, &eventType, 0);
      eventType = EVENT_RB_LED;
      xQueueSend(commandQueue, &eventType, 0);
-     //Serial.println("Que Rainbow LED");
+     Serial.println("Que Rainbow LED");
      break;
    case MSG_PWR_MODE:
      eventType = EVENT_ACKNOWLEDGEMENT;
      xQueueSend(commandQueue, &eventType, 0);
      eventType = EVENT_PWR_MODE;
      xQueueSend(commandQueue, &eventType, 0);
-     //Serial.println("Que Power Mode");
+     Serial.println("Que Power Mode");
      break;
    default:
      eventType = EVENT_WAKE_TIMER;
      xQueueSend(commandQueue, &eventType, 0);
-     //Serial.println("Que Wakeup Timer");
+     Serial.println("Que Wakeup Timer");
    }
    // Set the received packet message type to wake timer after queuing.
    receivedPacket.msgType = MSG_WAKE_TIMER;
@@ -398,11 +394,13 @@
      }
      else
      {
-         //Serial.print("JSON parse failed: ");
-         //Serial.println(error.c_str());
+         Serial.print("JSON parse failed: ");
+         Serial.println(error.c_str());
      }
  }
  
+ 
+
  /**
   * @brief Initializes the LoRa radio and its settings.
   *
@@ -441,9 +439,14 @@
                        0, true, 0, 0, LORA_IQ_INVERSION_ON, true);
  
      loraInitialized = true;
-     //Serial.println("Starting Radio.Rx");
+     Serial.println("Starting Radio.Rx");
      Radio.Rx(RX_TIMEOUT_VALUE);
-     //Serial.println("LoRa initialized.");
+     Serial.println("LoRa initialized.");
+    //  detachInterrupt(LORA_DIO_PIN);
+    //  delay(100);
+    //  attachInterrupt(LORA_DIO_PIN, DIOInterruptHandler, FALLING);
+    //  delay(100);
+
  }
  
  /**
@@ -544,9 +547,9 @@
      if (!loraInitialized)
          return;
      Radio.Send(buffer, size);
-     //Serial.print("Sent Packet: ");
-     //Serial.write((char *)buffer);
-     //Serial.println();
+     Serial.print("Sent Packet: ");
+     Serial.write((char *)buffer);
+     Serial.println();
  }
  
  /**

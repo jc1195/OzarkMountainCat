@@ -24,7 +24,7 @@ void BattHandler::begin() {
   // Short delay to allow the ADC to stabilize after configuration
   delay(1);
 
-  //Serial.println("Battery measurement initialized.");
+  Serial.println("Battery measurement initialized.");
 }
 
 /**
@@ -37,11 +37,11 @@ void BattHandler::begin() {
  */
 float BattHandler::readVBatt() {
     // Uncomment the following debug prints to see ADC conversion details.
-    // //Serial.print("MVOLTS_PER_LSB: ");
-    // //Serial.println(REAL_VBAT_MV_PER_LSB);
-    // //Serial.println(float(0.73242188F * 1.73));
-    // //Serial.print("VBAT_Analog_Read: ");
-    // //Serial.println(analogRead(PIN_VBAT));
+    // Serial.print("MVOLTS_PER_LSB: ");
+    // Serial.println(REAL_VBAT_MV_PER_LSB);
+    // Serial.println(float(0.73242188F * 1.73));
+    // Serial.print("VBAT_Analog_Read: ");
+    // Serial.println(analogRead(PIN_VBAT));
 
     float vbat = analogRead(PIN_VBAT) * REAL_VBAT_MV_PER_LSB;
     return vbat;
