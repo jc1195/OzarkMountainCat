@@ -17,6 +17,15 @@
 #include <queue.h>
 #include "SX126x-Arduino.h"
 
+// #include "lora.h"
+// #include "rgb.h"
+// #include "buzzer.h"
+// #include "gps.h"
+// #include "batt.h"
+#include "queHandler.h"
+
+
+
 //#include <Tone.h>
 //#include <Adafruit_TinyUSB.h>
 // #include <Wire.h>
@@ -132,25 +141,30 @@ struct ReceivedPacket{
     uint8_t hBatt;           /**< Harness battery level. */
 };
 
+
+
 /**
  * @brief Forward declaration of the BuzzerHandler class.
  */
 class BuzzerHandler;
-
+extern BuzzerHandler Buzzer;
 /**
  * @brief Forward declaration of the GPSHandler class.
  */
 class GPSHandler;
+extern GPSHandler GPS;
 
 /**
  * @brief Forward declaration of the LoraHandler class.
  */
 class LoraHandler;
-
+extern LoraHandler Lora;
+class RGBHandler;
+extern RGBHandler RGB;
 /**
  * @brief Forward declaration of the BleHandler class.
  */
-class BleHandler;
+// class BleHandler;
 
 /**
  * @brief Global semaphore for wake signals.
@@ -178,4 +192,5 @@ extern ReceivedPacket receivedPacket;
  */
 extern EventType eventType;
 
-//extern SoftwareTimer taskWakeupTimer;
+class QueHandler;
+extern QueHandler queHandler;

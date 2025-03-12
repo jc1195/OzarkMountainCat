@@ -19,8 +19,10 @@ RGBHandler::RGBHandler() : strip(NUM_PIXELS, PIN_RGB, NEO_GRB + NEO_KHZ800) {
 void RGBHandler::begin() {
     strip.begin();
     strip.show(); // Initialize all pixels to 'off'
-    //off();
+    delay(10);
+    off();
     Serial.println("RGB LED initialized.");
+    
 }
 
 /**

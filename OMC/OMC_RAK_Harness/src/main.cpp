@@ -15,6 +15,9 @@
 #include <Wire.h>
 // #include "board.h"
 
+QueHandler queHandler;
+
+
 /**
  * @brief Global instance of the GPSHandler class.
  *
@@ -111,19 +114,19 @@ void queEvent();
 void periodicWakeup(TimerHandle_t unused)
 {
   // In an ISR context, indicate wake-up due to timer.
-  Serial.print("periodicWakeup before give: ");
-  Serial.println(uxSemaphoreGetCount(wakeSemaphore));
+  // Serial.print("periodicWakeup before give: ");
+  // Serial.println(uxSemaphoreGetCount(wakeSemaphore));
   wokeOnTimer = true;
 
   if (uxSemaphoreGetCount(wakeSemaphore) == 0)
   {
     xSemaphoreGiveFromISR(wakeSemaphore, pdFALSE);
-    Serial.print("periodicWakeup After Give: ");
-    Serial.println(uxSemaphoreGetCount(wakeSemaphore));
+    // Serial.print("periodicWakeup After Give: ");
+    // Serial.println(uxSemaphoreGetCount(wakeSemaphore));
   }
   else
   {
-    Serial.println("periodicWakeup: Semaphore already given!");
+    // Serial.println("periodicWakeup: Semaphore already given!");
   }
 }
 
@@ -152,64 +155,13 @@ void Sleep()
     Serial.println("Device going to sleep: 15 seconds");
     break;
   }
+  Serial.println();
   wokeOnTimer = false;
   // Start the software timer with the given sleepTime and attach the periodicWakeup callback.
   taskWakeupTimer.stop();
   taskWakeupTimer.setPeriod(sleepTime);
   // taskWakeupTimer.begin(sleepTime, periodicWakeup, taskWakeupTimer.getID(), false);
   taskWakeupTimer.start();
-}
-
-void Que()
-{
-  // Process any queued commands in a non-blocking manner.
-  while (xQueueReceive(commandQueue, &eventType, 0) == pdTRUE)
-  {
-    Serial.println("Processing queued command...");
-    switch (eventType)
-    {
-    case EVENT_ACKNOWLEDGEMENT:
-      Serial.println("Processing command: send Acknowledgement");
-      Lora.SendJSON(true);
-      break;
-    case EVENT_LED:
-      Serial.println("Processing command: Handle RGB");
-      RGB.setColor();
-      break;
-    case EVENT_RB_LED:
-      Serial.println("Processing command: Turn on Rainbow LED");
-      // Rainbow LED handling logic (to be implemented).
-      break;
-    case EVENT_BUZZER:
-      Serial.println("Processing command: Buzzer");
-      Buzzer.begin();
-      if (!receivedPacket.buzzer){
-        Serial.println("Buzzer off");
-        Buzzer.off();
-      } else
-      {
-        Serial.println("Buzzer on");
-        Buzzer.on();
-      }
-      break;
-    case EVENT_PWR_MODE:
-      Serial.println("Processing command: Change Power Mode");
-      // Power Mode change is handled in the main loop.
-      break;
-    case EVENT_WAKE_TIMER:
-      Serial.println("Processing command: Wake Timer Expired");
-      // Routine wakeup: send a JSON packet with GPS and other data.
-      Lora.SendJSON(GPS.getLatitude(), GPS.getLongitude(), GPS.getHour(), GPS.getMinute(), GPS.getSecond(), GPS.getSIV(), GPS.getHDOP(), GPS.getAltitude());
-
-      // Lora.SendJSON(43.5260706, -111.9634165, 07, 07, 07, 10, 1, 4910);
-      break;
-    default:
-      break;
-    }
-    Serial.println("Que has been checked");
-    // While loop
-  }
-  vTaskDelay(10); // Delay for 1 tick (adjust as needed)
 }
 
 /**
@@ -227,50 +179,82 @@ void powerManagementTask(void *pvParameters)
   {
     if (xSemaphoreTake(wakeSemaphore, portMAX_DELAY) == pdTRUE)
     {
-      Serial.println("Device woke up!");
+      //Serial.println("Device woke up!");
       receivedPacket.hBatt = Batt.mvToPercent(Batt.readVBatt());
 
       // Wake up messages
       if (wokeOnTimer)
       {
+        Serial.printf("Step 1: \n\n");
         Serial.println("Woke up on timer");
         receivedPacket.msgType = MSG_WAKE_TIMER;
         wokeOnTimer = false;
-        Serial.println("Queing Wake up Timer Events");
         queEvent();
+        Serial.println();
+        //Que();
       }
       else
       {
+        Serial.printf("Step 1: \n\n");
         Serial.println("Woke up on Lora");
         Serial.println("Queing Lora Events");
         queEvent();
+        Serial.println();
+        //Que();
       }
 
-      pinMode(WB_IO2, INPUT);
-      delay(10);
-
-      if (receivedPacket.mode != MODE_LIVE_TRACKING && digitalRead(WB_IO2) == LOW)
+      if (receivedPacket.mode != MODE_LIVE_TRACKING)
       {
-        Serial.println("Waking up GPS for fix...");
-        GPS.begin();
-      }
-
-      // Wait for GPS fix and check queue.
-      while (!GPS.hasFix())
-      {
+        if (digitalRead(WB_IO2) == LOW)
+        {
+          Serial.printf("Step 2: \n\n");
+          Serial.println("Waking up GPS for fix...");
+          GPS.begin();
+          Serial.println("Updating GPS data");
+          Serial.println();
+          GPS.update();
+        }
+      } else {
+        Serial.printf("Step 2: \n\n");
+        Serial.println("Updating GPS data");
+        Serial.println();
         GPS.update();
-        Serial.println("No GPS fix yet, checking que...");
-        Que();
-        vTaskDelay(TICKS(1000));
+      }
+      
+      // Wait for GPS fix and check queue.
+      if (GPS.hasFix()){
+        Serial.printf("Step 3: \n\n");
+        GPS.update();
+        Serial.println("GPS Aquired, checking que...");
+        Serial.println();
+        Serial.printf("Step 4: \n\n");
+        queHandler.Que();
+      } else {
+        while (!GPS.hasFix())
+        {
+          Serial.printf("Step 3: \n\n");
+          GPS.update();
+          Serial.println("No GPS fix yet, checking que...");
+          Serial.println();
+          Serial.printf("Step 4: \n\n");
+          queHandler.Que();
+          vTaskDelay(TICKS(1000));
+        }
       }
 
       // Turn GPS off when not in live tracking mode.
       if (receivedPacket.mode != MODE_LIVE_TRACKING)
       {
+        Serial.printf("Step 5: \n\n");
+        Serial.println("GPS fix acquired, turning off GPS...");
+        Serial.println();
         GPS.gpsOff();
+        Sleep();
+      } else {
+        Serial.printf("Step 5: \n\n");
+        Serial.println();
+        Sleep();
       }
-      // queues have been checked and GPS has a fix. Go to sleep.
-      Sleep();
       // Semaphore Event
     }
     // for loop
@@ -285,12 +269,8 @@ void powerManagementTask(void *pvParameters)
  */
 void setup()
 {
-  // Create the command queue to hold up to 10 events.
-
   pinMode(LED_GREEN, OUTPUT);
   pinMode(LED_BLUE, OUTPUT);
-
-  // digitalWrite(LED_GREEN, HIGH);
 
   Wire.begin();
   time_t timeout = millis();
@@ -310,13 +290,15 @@ void setup()
     }
   }
 
-  delay(1000);
+  delay(2000);
 
   while (!GPS.begin())
   {
     Serial.println("Failed to initialize GPS! Trying again");
     delay(1000);
   }
+
+  delay(2000);
 
   Lora.begin();
   RGB.begin();
@@ -347,7 +329,7 @@ void setup()
   }
 
   // Create the power management task.
-  xTaskCreate(powerManagementTask, "PowerMgmt", 512, NULL, 1, NULL);
+  xTaskCreate(powerManagementTask, "PowerMgmt", 2048, NULL, 1, NULL);
   delay(1000);
 
   if (wakeSemaphore != NULL)
@@ -359,6 +341,8 @@ void setup()
       xSemaphoreTake(wakeSemaphore, 10);
     }
   }
+
+  receivedPacket.mode = MODE_LIVE_TRACKING;
 
   Serial.println("Setup complete.");
   taskWakeupTimer.begin(15000, periodicWakeup);
@@ -425,5 +409,6 @@ void queEvent()
     eventType = EVENT_WAKE_TIMER;
     xQueueSend(commandQueue, &eventType, 0);
     Serial.println("Que Wakeup Timer");
+    break;
   }
 }

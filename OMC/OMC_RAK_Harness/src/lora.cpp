@@ -319,6 +319,7 @@
      eventType = EVENT_WAKE_TIMER;
      xQueueSend(commandQueue, &eventType, 0);
      Serial.println("Que Wakeup Timer");
+     break;
    }
    // Set the received packet message type to wake timer after queuing.
    receivedPacket.msgType = MSG_WAKE_TIMER;

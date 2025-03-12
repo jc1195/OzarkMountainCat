@@ -17,8 +17,6 @@ bool GPSHandler::begin() {
     digitalWrite(WB_IO2, 1);
     delay(100);
 
-    
-
     // Initialize GNSS using the SparkFun library.
     if (myGNSS.begin() == false) {
         Serial.println("Failed to initialize GNSS!");
@@ -27,21 +25,36 @@ bool GPSHandler::begin() {
     }
     // Optional: set high precision mode (commented out).
     // if (myGNSS.setHighPrecisionMode(true) == false) {
+    //     digitalWrite(LED_GREEN, HIGH);
     //     Serial.println("Failed to set high precision mode!");
     //     return false;
     // }
     // Set the power management mode to full power.
-    // if (myGNSS.setPowerManagement(SFE_UBLOX_PMS_MODE_FULLPOWER) == false) {
-    //     Serial.println("Failed to set power management!");
+    if (myGNSS.setPowerManagement(SFE_UBLOX_PMS_MODE_FULLPOWER) == false) {
+        digitalWrite(LED_GREEN, HIGH);
+        Serial.println("Failed to set power management!");
+        return false;
+    }
+
+    if (myGNSS.setDynamicModel(DYN_MODEL_PEDESTRIAN) == false) 
+    {
+        Serial.println("Failed to set dynamic model!");
+        return false;
+    }
+
+    myGNSS.setI2COutput(COM_TYPE_UBX);
+
+    myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_GPS);
+    myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_GALILEO);
+    myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_BEIDOU);
+    // myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_GLONASS);
+
+    // Save the GNSS configuration.
+    // if (myGNSS.saveConfiguration() == false){
+    //     Serial.println("Failed to save GNSS configuration!");
     //     return false;
     // }
 
-    // // Save the GNSS configuration.
-    // myGNSS.saveConfiguration();
-
-    // Uncomment if using a LED indicator for GNSS status.
-    // pinMode(LED_BLUE, OUTPUT);
-    // digitalWrite(LED_BLUE, HIGH);
     Serial.println("GNSS initialized.");
     return true;
 }
@@ -72,19 +85,19 @@ void GPSHandler::update() {
     //Serial.println("Updating GPS data...");
     if (myGNSS.getGnssFixOk()) {
         fix = true;
-        // Convert raw latitude and longitude values.
-        lat = myGNSS.getLatitude() / 10000000.0;
-        lon = myGNSS.getLongitude() / 10000000.0;
-        hour = myGNSS.getHour();
-        min = myGNSS.getMinute();
-        sec = myGNSS.getSecond();
-        siv = myGNSS.getSIV();
-        hdop = myGNSS.getHorizontalDOP();
-        // Convert altitude from meters to feet: (meters/1000)*3.28084.
-        alt = (myGNSS.getAltitudeMSL() / 1000.0) * 3.28084;
     } else {
         fix = false;
     }
+    // Convert raw latitude and longitude values.
+    lat = myGNSS.getLatitude() / 10000000.0;
+    lon = myGNSS.getLongitude() / 10000000.0;
+    hour = myGNSS.getHour();
+    min = myGNSS.getMinute();
+    sec = myGNSS.getSecond();
+    siv = myGNSS.getSIV();
+    hdop = myGNSS.getHorizontalDOP();
+    // Convert altitude from meters to feet: (meters/1000)*3.28084.
+    alt = (myGNSS.getAltitudeMSL() / 1000.0) * 3.28084;
 }
 
 /**

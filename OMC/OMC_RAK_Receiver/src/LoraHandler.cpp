@@ -103,6 +103,8 @@ void LoraHandler::SerializeJSON(MessageType msgType)
     StaticJsonDocument<200> doc;
     if (msgType == MSG_ALL_DATA)
     {
+        doc["msgType"] = MSG_ALL_DATA;
+        doc["mode"] = receivedPacket.mode;
         doc["lat"] = receivedPacket.lat;
         doc["lon"] = receivedPacket.lon;
         doc["hour"] = receivedPacket.hour;
@@ -113,23 +115,42 @@ void LoraHandler::SerializeJSON(MessageType msgType)
         doc["alt"] = receivedPacket.alt;
         doc["rssi"] = receivedPacket.rssi;
         doc["snr"] = receivedPacket.snr;
-        doc["rBatt"] = 27;                   // Receiver battery
+        doc["r"] = receivedPacket.r;
+        doc["g"] = receivedPacket.g;    
+        doc["b"] = receivedPacket.b;
+        doc["rBatt"] = receivedPacket.rBatt; // Receiver battery
         doc["hBatt"] = receivedPacket.hBatt; // Harness battery
     }
     else if (msgType == MSG_ACKNOWLEDGEMENT)
     {
+        doc["msgType"] = MSG_ACKNOWLEDGEMENT;
+        doc["mode"] = receivedPacket.mode;
         doc["ack"] = receivedPacket.ack;
         doc["rssi"] = receivedPacket.rssi;
         doc["snr"] = receivedPacket.snr;
+        doc["r"] = receivedPacket.r;
+        doc["g"] = receivedPacket.g;    
+        doc["b"] = receivedPacket.b;
+        doc["rBatt"] = receivedPacket.rBatt; // Receiver battery
+        doc["hBatt"] = receivedPacket.hBatt; // Harness battery
     }
     else if (msgType == MSG_BUZZER)
     {
+        doc["msgType"] = MSG_BUZZER;
+        doc["mode"] = receivedPacket.mode;
         doc["buzzer"] = receivedPacket.buzzer;
         doc["rssi"] = receivedPacket.rssi;
         doc["snr"] = receivedPacket.snr;
+        doc["r"] = receivedPacket.r;
+        doc["g"] = receivedPacket.g;    
+        doc["b"] = receivedPacket.b;
+        doc["rBatt"] = receivedPacket.rBatt; // Receiver battery
+        doc["hBatt"] = receivedPacket.hBatt; // Harness battery
     }
     else if (msgType == MSG_LED)
     {
+        doc["msgType"] = MSG_LED;
+        doc["mode"] = receivedPacket.mode;
         doc["r"] = receivedPacket.r;
         doc["g"] = receivedPacket.g;
         doc["b"] = receivedPacket.b;
@@ -138,15 +159,28 @@ void LoraHandler::SerializeJSON(MessageType msgType)
     }
     else if (msgType == MSG_RB_LED)
     {
+        doc["msgType"] = MSG_RB_LED;
+        doc["mode"] = receivedPacket.mode;
         doc["rbLed"] = receivedPacket.rbLed; // rainbow led
         doc["rssi"] = receivedPacket.rssi;
         doc["snr"] = receivedPacket.snr;
+        doc["r"] = receivedPacket.r;
+        doc["g"] = receivedPacket.g;    
+        doc["b"] = receivedPacket.b;
+        doc["rBatt"] = receivedPacket.rBatt; // Receiver battery
+        doc["hBatt"] = receivedPacket.hBatt; // Harness battery
     }
     else if (msgType == MSG_PWR_MODE)
     {
+        doc["msgType"] = MSG_PWR_MODE;
         doc["mode"] = receivedPacket.mode;
         doc["rssi"] = receivedPacket.rssi;
         doc["snr"] = receivedPacket.snr;
+        doc["r"] = receivedPacket.r;
+        doc["g"] = receivedPacket.g;    
+        doc["b"] = receivedPacket.b;
+        doc["rBatt"] = receivedPacket.rBatt; // Receiver battery
+        doc["hBatt"] = receivedPacket.hBatt; // Harness battery
     }
 
     char buffer[200];
@@ -179,6 +213,7 @@ void LoraHandler::OnRxToJSON(uint8_t *payload, int16_t rssi, int8_t snr)
     {
         // Extract fields
         receivedPacket.msgType = doc["msgType"];
+        receivedPacket.mode = doc["mode"];
         delay(10);
         if (receivedPacket.msgType == MSG_LED)
         {
@@ -224,7 +259,7 @@ void LoraHandler::OnRxToJSON(uint8_t *payload, int16_t rssi, int8_t snr)
             receivedPacket.alt = doc["alt"];
             receivedPacket.rssi = rssi;
             receivedPacket.snr = snr;
-            receivedPacket.rBatt = 27;           // Receiver battery
+            receivedPacket.rBatt = receivedPacket.rBatt; // Receiver battery
             receivedPacket.hBatt = doc["hBatt"]; // Harness battery
         };
     }

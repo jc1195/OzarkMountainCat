@@ -250,19 +250,19 @@ function setLightColor() {
     // Mapping from dropdown color codes to RGB values.
     // Modify these values as needed to match your desired colors.
     const colorMap = {
-        'M': { r: 255, g: 0, b: 255 }, // Rainbow (placeholder value)
-        'L': { r: 255, g: 0, b: 0 }, // Red
-        'K': { r: 128, g: 50, b: 128 }, // Pink
-        'J': { r: 128, g: 0, b: 128 }, // Purple
-        'I': { r: 255, g: 165, b: 0 }, // Orange
-        'H': { r: 255, g: 140, b: 0 }, // Bright Orange
-        'G': { r: 255, g: 255, b: 0 }, // Yellow
-        'F': { r: 0, g: 255, b: 0 }, // Bright Green
-        'E': { r: 0, g: 128, b: 0 }, // Green
-        'D': { r: 0, g: 0, b: 255 }, // Blue
-        'C': { r: 0, g: 255, b: 255 }, // Cyan
-        'B': { r: 255, g: 255, b: 255 }, // White
-        'A': { r: 0, g: 0, b: 0 }  // Off
+        1: { r: 255, g: 0, b: 255 }, // Rainbow (placeholder value)
+        2: { r: 255, g: 0, b: 0 }, // Red
+        3: { r: 128, g: 50, b: 128 }, // Pink
+        4: { r: 128, g: 0, b: 128 }, // Purple
+        5: { r: 255, g: 165, b: 0 }, // Orange
+        6: { r: 255, g: 140, b: 0 }, // Bright Orange
+        7: { r: 255, g: 255, b: 0 }, // Yellow
+        8: { r: 0, g: 255, b: 0 }, // Bright Green
+        9: { r: 0, g: 128, b: 0 }, // Green
+        10: { r: 0, g: 0, b: 255 }, // Blue
+        11: { r: 0, g: 255, b: 255 }, // Cyan
+        12: { r: 255, g: 255, b: 255 }, // White
+        13: { r: 0, g: 0, b: 0 }  // Off
     };
 
     // If the BLE device is connected, send the new JSON command
@@ -366,6 +366,50 @@ function turnOffBuzzer() {
             buzzer: false,
         };
         sendJsonCommandToBleDevice(command);
+    }
+}
+
+/**
+ * @function updateLightIcon
+ * @description Updates the light icon on the UI based on the LED color values and rainbow LED flag.
+ * 
+ * Chooses an image source for the light icon depending on the provided color values and whether
+ * the rainbow LED is activated.
+ *
+ * @param {number} r - Red channel value.
+ * @param {number} g - Green channel value.
+ * @param {number} b - Blue channel value.
+ * @param {boolean} rbLed - Flag indicating if the rainbow LED is on.
+ */
+function updateLightIcon(r, g, b, rbLed) {
+    const lightIcon = document.getElementById("lightIcon");
+
+    const colorMap = {
+        1: 'Rainbow',
+        2: 'Red',
+        3: 'Pink',
+        4: 'Purple',
+        5: 'Orange',
+        6: 'BrightOrange',
+        7: 'Yellow',
+        8: 'Bright Green',
+        9: 'Green',
+        10: 'Blue',
+        11: 'Cyan',
+        12: 'White',
+        13: 'Off', // Assuming 'A' means off.
+    };
+
+    if (r != 0) {
+        lightIcon.src = "LBRed.png";
+    } else if (b != 0) {
+        lightIcon.src = "LBRed.png";
+    } else if (g != 0) {
+        lightIcon.src = "LBRed.png";
+    } else if (rbLed == true) {  // Rainbow LED active.
+        lightIcon.src = "LBGreen.png";
+    } else {
+        lightIcon.src = "LBOff.png";
     }
 }
 

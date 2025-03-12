@@ -87,6 +87,7 @@ function handleDataReceived(event) {
         let hdop = dataObj.hdop || 0.0;
         let rBatt = dataObj.rBatt || 0.0; // Receiver battery.
         let hBatt = dataObj.hBatt || 0.0; // Harness battery.
+        let alt = dataObj.alt || 0.0;    // Altitude.
         // Log coordinates and update UI.
         console.log(`Latitude: ${lat}, Longitude: ${lon}`);
         document.getElementById('cordValue').textContent = `Coordinates: ${lat}, ${lon}`;
@@ -105,16 +106,20 @@ function handleDataReceived(event) {
     
     // These values are always sent by the Receiver.
     let rbLed = dataObj.rbLed;
-    let mode = dataObj.mode || 10;
+    let mode = dataObj.mode;
     let snr = dataObj.snr || 0;
     let rssi = dataObj.rssi || -999;
+    let buzzer = dataObj.buzzer || false;
+    let ack = dataObj.ack || false;
     let r = dataObj.r || 0;      
     let g = dataObj.g || 0;
     let b = dataObj.b || 0;
+    let alt = dataObj.alt || 0.0;    // Altitude.
     
     // Update the light icon on the UI with color information.
     updateLightIcon(r, g, b, rbLed);
     // Update the power mode display.
+    console.log(`mode: ${mode}`);
     document.getElementById('powerModeValue').textContent = parsePowerMode(mode);
     // Update signal bars based on the RSSI value.
     updateSignalBars(rssi);
@@ -131,10 +136,10 @@ function handleDataReceived(event) {
  */
 function parsePowerMode(mode) {
     switch (mode) {
-        case 10: return 'Error: No Tracking Mode';
-        case 2: return 'Extreme Power Saving Mode';
-        case 1: return 'Power Saving Mode';
         case 0: return 'Live Tracking';
+        case 1: return 'Power Saving Mode';
+        case 2: return 'Extreme Power Saving Mode';
+        case 10: return 'Error: No Tracking Mode';
         default: return 'Error: Unknown';
     }
 }
@@ -192,49 +197,7 @@ function updateBatteryLevel(level, battFlag) {
     }
 }
 
-/**
- * @function updateLightIcon
- * @description Updates the light icon on the UI based on the LED color values and rainbow LED flag.
- * 
- * Chooses an image source for the light icon depending on the provided color values and whether
- * the rainbow LED is activated.
- *
- * @param {number} r - Red channel value.
- * @param {number} g - Green channel value.
- * @param {number} b - Blue channel value.
- * @param {boolean} rbLed - Flag indicating if the rainbow LED is on.
- */
-function updateLightIcon(r, g, b, rbLed) {
-    const lightIcon = document.getElementById("lightIcon");
 
-    const colorMap = {
-        'M': 'Rainbow',
-        'L': 'Red',
-        'K': 'Pink',
-        'J': 'Purple',
-        'I': 'Orange',
-        'H': 'BrightOrange',
-        'G': 'Yellow',
-        'F': 'Bright Green',
-        'E': 'Green',
-        'D': 'Blue',
-        'C': 'Cyan',
-        'B': 'White',
-        'A': 'Off', // Assuming 'A' means off.
-    };
-
-    if (r != 0) {
-        lightIcon.src = "LBRed.png";
-    } else if (b != 0) {
-        lightIcon.src = "LBRed.png";
-    } else if (g != 0) {
-        lightIcon.src = "LBRed.png";
-    } else if (rbLed == true) {  // Rainbow LED active.
-        lightIcon.src = "LBGreen.png";
-    } else {
-        lightIcon.src = "LBOff.png";
-    }
-}
 
 /**
  * @function updateSatIcon

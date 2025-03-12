@@ -95,7 +95,7 @@ void setup() {
 // }
 
 void loop(){
-    //RadioEvents.RxDone
+    receivedPacket.rBatt = Batt.mvToPercent(Batt.readVBatt());
     if (packetReceived){
         char buffer[200];
         memcpy(buffer, RcvBuffer, sizeof(RcvBuffer));
