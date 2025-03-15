@@ -54,6 +54,11 @@
             <div id="hBatteryPercentage" class="battery-percentage">0%</div>
         </div>
 
+         <!-- Harness and User Altitude value display -->
+         <div class="alt-container">
+            <span class="alt-value" id="hAltValue">Harness Altitude 0.0ft</span>
+        </div>
+
         <!-- Signal strength indicator -->
         <div class="signal-container">
             <img id="signalIcon" class="signal-icon" src="0Bars.png" alt="Signal Icon">
@@ -67,7 +72,9 @@
         </div>
 
         <!-- HDOP value display -->
-        <span class="sat-value" id="hdopValue">0.00 HDOP</span>
+        <div class="hdop-container">
+            <span class="sat-value" id="hdopValue">0.00 HDOP</span>
+        </div>
 
         <!-- Light indicator container -->
         <div class="light-container">
@@ -90,6 +97,10 @@
             <div id="rBatteryPercentage" class="battery-percentage">0%</div>
         </div>
 
+        <div class="alt-container">
+            <span class="alt-value" id="uAltValue">User Altitude 0.0ft</span>
+        </div>
+
         <!-- Display current power mode -->
         <span class="info-value" id="powerModeValue">Not Connected</span>
 
@@ -98,6 +109,8 @@
         
         <!-- Display current coordinates -->
         <span class="info-value-right" id="cordValue">0.0, -0.0</span>
+
+        
     </div>
 
     <!-- Container for interactive buttons such as power mode and light color selection -->
@@ -111,7 +124,7 @@
 
         <!-- Dropdown to select the light color -->
         <select id="lightColorSelect" onchange="setLightColor()">
-            <option value=1>Rainbow</option>
+            <!-- <option value=1>Rainbow</option> -->
             <option value=2>Red</option>
             <option value=3>Pink</option>
             <option value=4>Purple</option>
@@ -127,6 +140,11 @@
         </select>
 
         <select id="musicSelect" onchange="musicActions()">
+            <option value=0>Off</option>
+            <option value=1>On</option>
+        </select>
+
+        <select id="rbLedSelect" onchange="rbLed()">
             <option value=0>Off</option>
             <option value=1>On</option>
         </select>

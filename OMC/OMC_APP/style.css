@@ -268,3 +268,27 @@ select {
 .light-value {
     font-size: 12px;
 }
+
+/* Satellite container styling */
+.hdop-container {
+    display: flex;
+    align-items: center;
+    border: 2px solid transparent;
+}
+
+/* Satellite value styling */
+.hdop-value {
+    font-size: 12px;
+}
+
+/* Satellite container styling */
+.alt-container {
+    display: flex;
+    align-items: center;
+    border: 2px solid transparent;
+}
+
+/* Satellite value styling */
+.alt-value {
+    font-size: 12px;
+}

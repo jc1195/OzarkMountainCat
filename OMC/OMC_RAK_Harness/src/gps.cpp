@@ -30,11 +30,11 @@ bool GPSHandler::begin() {
     //     return false;
     // }
     // Set the power management mode to full power.
-    if (myGNSS.setPowerManagement(SFE_UBLOX_PMS_MODE_FULLPOWER) == false) {
-        digitalWrite(LED_GREEN, HIGH);
-        Serial.println("Failed to set power management!");
-        return false;
-    }
+    // if (myGNSS.setPowerManagement(SFE_UBLOX_PMS_MODE_FULLPOWER) == false) {
+    //     digitalWrite(LED_GREEN, HIGH);
+    //     Serial.println("Failed to set power management!");
+    //     return false;
+    // }
 
     if (myGNSS.setDynamicModel(DYN_MODEL_PEDESTRIAN) == false) 
     {
@@ -42,11 +42,12 @@ bool GPSHandler::begin() {
         return false;
     }
 
-    myGNSS.setI2COutput(COM_TYPE_UBX);
 
-    myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_GPS);
-    myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_GALILEO);
-    myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_BEIDOU);
+    // myGNSS.setI2COutput(COM_TYPE_UBX);
+
+     //myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_GPS);
+    // myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_GALILEO);
+    //myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_BEIDOU);
     // myGNSS.enableGNSS(true, SFE_UBLOX_GNSS_ID_GLONASS);
 
     // Save the GNSS configuration.
@@ -83,7 +84,7 @@ void GPSHandler::gpsOff() {
 void GPSHandler::update() {
     // Update GNSS data using the SparkFun library.
     //Serial.println("Updating GPS data...");
-    if (myGNSS.getGnssFixOk()) {
+    if (myGNSS.getGnssFixOk() && myGNSS.getSIV() > 4) {
         fix = true;
     } else {
         fix = false;

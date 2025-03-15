@@ -102,6 +102,7 @@ function handleDataReceived(event) {
         // Update satellite icon and HDOP value.
         updateSatIcon(siv);
         document.getElementById('hdopValue').textContent = `${hdop} HDOP`;
+        document.getElementById('hAltValue').textContent = `Harness Altitude ${alt}ft`;
     }
     
     // These values are always sent by the Receiver.
@@ -196,8 +197,6 @@ function updateBatteryLevel(level, battFlag) {
         rBatteryPercentage.textContent = level + "%";
     }
 }
-
-
 
 /**
  * @function updateSatIcon

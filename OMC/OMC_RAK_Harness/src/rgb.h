@@ -60,6 +60,10 @@ public:
      */
     void setColor();
 
+    void rainbowCycle();
+
+    void offRainbow();
+
     /**
      * @brief Turns off the NeoPixel LED.
      *
@@ -70,4 +74,5 @@ public:
 private:
     /** @brief Instance of the Adafruit_NeoPixel library to control the LED. */
     Adafruit_NeoPixel strip;
+    bool rainbowOn;  
 };

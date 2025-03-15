@@ -23,7 +23,16 @@ void QueHandler::Que()
       break;
     case EVENT_RB_LED:
       Serial.println("Processing command: Turn on Rainbow LED");
-      // Rainbow LED handling logic (to be implemented).
+      if (!receivedPacket.rbLed)
+      {
+        Serial.println("Turning off Rainbow LED");
+        RGB.offRainbow();
+      }
+      else
+      {
+        Serial.println("Turning on Rainbow LED");
+        RGB.rainbowCycle();
+      }
       break;
     case EVENT_BUZZER:
       Serial.println("Processing command: Buzzer");

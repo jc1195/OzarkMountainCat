@@ -122,6 +122,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
         const locationWatchID = navigator.geolocation.watchPosition(position => {
             var lat = position.coords.latitude;
             var lng = position.coords.longitude;
+            var alt = position.coords.altitude;
+            if (alt == null) {
+                alt = 0.0;
+            }
+            alt = (alt * 3.28084).toFixed(0);
+            document.getElementById('uAltValue').textContent = `User Altitude ${alt}ft`;
 
             userLocationMarker.setLngLat([lng, lat]).addTo(map);
 
@@ -236,7 +242,26 @@ document.addEventListener('DOMContentLoaded', (event) => {
 //         console.error('Bluetooth device is not connected');
 //     }
 // }
-
+function rbLed() {
+    var command = document.getElementById('rbLedSelect').value;
+    if (command == 1) {
+        if (bleDevice && bleDevice.gatt.connected) {
+            let command = {
+                msgType: 4,
+                rbLed: true
+            };
+            sendJsonCommandToBleDevice(command);
+        }
+    } else {
+        if (bleDevice && bleDevice.gatt.connected) {
+            let command = {
+                msgType: 4,
+                rbLed: false
+            };
+            sendJsonCommandToBleDevice(command);
+        }
+    }
+}
 /**
  * @function setLightColor
  * @description Reads the selected color from the dropdown, maps it to specific RGB values,
